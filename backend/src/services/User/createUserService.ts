@@ -8,10 +8,12 @@ interface UserRequest{
 
 class CreateUserService{
   async execute({ name, email, password }: UserRequest){
-
+  
     // verificar se ele enviou um email
     if(!email){
+     
       throw new Error("Email incorrect")
+     
     }
 
     //Verificar se esse email já está cadastrado na plataforma
@@ -22,7 +24,10 @@ class CreateUserService{
     })
 
     if(userAlreadyExists){
-      throw new Error("User already exists")
+      const message = "User already exists"
+     
+      throw new Error(message);
+  
     }
     const password_hash = await hash(password,8)
     
@@ -39,7 +44,7 @@ class CreateUserService{
       }
     })
 
-
+   
     return user;
   }
 }
