@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { CreateCategoryController } from "./controllers/category/CreateCategoryController";
 import { ListCategoryController } from "./controllers/category/ListCategoryController";
+import { CreateProductController } from "./controllers/product/CreateProductController";
 import { AuthUserController } from "./controllers/user/AuthUserController";
 import { CreateUserController } from "./controllers/user/CreateUserController";
 import { DetailUserController } from "./controllers/user/DetailUserController";
@@ -14,9 +15,14 @@ const router = Router();
  
 //#endregion
  
+
 //#region  CATEGORY ROUTES
   router.post('/category',IsAuthenticated, new CreateCategoryController().handle);
   router.get('/category',IsAuthenticated, new ListCategoryController().handle );
 //#endregion
 
+
+//#region  PRODUCT ROUTES 
+  router.post('/product',IsAuthenticated, new CreateProductController().handle);
+//#endregion
 export { router };
