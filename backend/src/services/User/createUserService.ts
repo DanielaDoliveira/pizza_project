@@ -1,5 +1,6 @@
 import prismaClient from '../../prisma'
 import { hash } from 'bcryptjs'
+import { Response } from 'express'
 interface UserRequest{
   name: string;
   email: string;
@@ -7,12 +8,12 @@ interface UserRequest{
 }
 
 class CreateUserService{
-  async execute({ name, email, password }: UserRequest){
-  
+  async execute({ name, email, password }: UserRequest, res: Response){
+  let message : string;
     // verificar se ele enviou um email
     if(!email){
-     
-      throw new Error("Email incorrect")
+     message = "Email incorrect"
+      return res.status(400).json(message)
      
     }
 
@@ -24,9 +25,9 @@ class CreateUserService{
     })
 
     if(userAlreadyExists){
-      const message = "User already exists"
+       message = "User already exists"
      
-      throw new Error(message);
+      return res.status(400).json(message)
   
     }
     const password_hash = await hash(password,8)

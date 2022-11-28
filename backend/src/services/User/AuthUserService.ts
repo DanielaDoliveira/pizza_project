@@ -16,12 +16,12 @@ class AuthUserService{
       }
     })
     if(!userAlreadyExists){
-      return res.status(201).json({message:"User/password not found! "})
+      return res.status(400).json({message:"User/password not found! "})
     }
     const user = userAlreadyExists;
     const passwordMatch = await compare(password, user.password);
     if(!passwordMatch){
-      return res.status(201).json({message:"User/password incorrect"})
+      return res.status(400).json({message:"User/password incorrect"})
     }
     const token = sign(
       {
