@@ -1,11 +1,17 @@
-import { Router, Request, Response } from "express";
+
+import multer from 'multer';
+import { Router } from "express";
 import { CreateCategoryController } from "./controllers/category/CreateCategoryController";
 import { ListCategoryController } from "./controllers/category/ListCategoryController";
 import { CreateProductController } from "./controllers/product/CreateProductController";
 import { AuthUserController } from "./controllers/user/AuthUserController";
 import { CreateUserController } from "./controllers/user/CreateUserController";
 import { DetailUserController } from "./controllers/user/DetailUserController";
-import { IsAuthenticated } from './middlewares/IsAuthenticated'
+import { IsAuthenticated } from './middlewares/IsAuthenticated';
+import uploadConfig from './config/multer';
+import { ListByCategoryController } from './controllers/product/ListByCategoryController';
+
+const upload = multer(uploadConfig.upload("./tmp"));
 const router = Router();
 
 //#region User Routes
@@ -23,6 +29,7 @@ const router = Router();
 
 
 //#region  PRODUCT ROUTES 
-  router.post('/product',IsAuthenticated, new CreateProductController().handle);
+  router.post('/product',IsAuthenticated, upload.single('file'), new CreateProductController().handle);
+  router.get('/category/product',IsAuthenticated, new ListByCategoryController().handle);
 //#endregion
 export { router };
