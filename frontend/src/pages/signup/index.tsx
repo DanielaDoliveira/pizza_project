@@ -5,9 +5,14 @@ import logoImg from '../../../public/logo.svg'
 import styles from '../../../styles/home.module.scss'
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/input';
-
+import { AuthContext } from '../../contexts/AuthContext'
+import { useContext, FormEvent } from 'react';
 import Link from 'next/link';
+
+interface eventProps extends React.FormEvent<HTMLInputElement>{}
 export default function SignUp() {
+
+ 
   return (
   <>
     <Head>
@@ -17,7 +22,7 @@ export default function SignUp() {
       <Image src = {logoImg} alt = "Sujeito Pizzaria"/>
       <div className = {styles.login}>
         <h1> Criando sua conta </h1>
-        <form>
+        <form >
 
         <Input
          placeholder = "Digite seu nome"
