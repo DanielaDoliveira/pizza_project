@@ -12,6 +12,7 @@ import uploadConfig from './config/multer';
 import { ListByCategoryController } from './controllers/product/ListByCategoryController';
 import { CreateOrderController } from './controllers/order/CreateOrderController';
 import { RemoveOrderController } from './controllers/order/RemoveOrderController';
+import { AddItemController } from './controllers/order/AddItemController';
 
 const upload = multer(uploadConfig.upload("./tmp"));
 const router = Router();
@@ -38,6 +39,7 @@ const router = Router();
 //#region ORDER ROUTES 
   router.post('/order',IsAuthenticated,new CreateOrderController().handle);
   router.delete('/order',IsAuthenticated, new RemoveOrderController().handle);
+  router.post('/order/add', IsAuthenticated, new AddItemController().handle);
 //#endregion
 
 
