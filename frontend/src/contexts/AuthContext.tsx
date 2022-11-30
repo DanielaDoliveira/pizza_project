@@ -1,6 +1,7 @@
 import Router from 'next/router';
-import { destroyCookie } from 'nookies';
+import { destroyCookie, setCookie } from 'nookies';
 import { createContext, ReactNode, useState } from 'react';
+import { api } from '../services/apiClient';
 
 type AuthContextData = {
   user: UserProps;
@@ -36,7 +37,34 @@ export function AuthProvider({ children }: AuthProviderProps){
   const [ user, setUser ] = useState<UserProps>();
   const isAuthenticated = !!user;
   async function signIn({ email, password }: SignInProps){
-    alert("Login: "+ email);
+   try{
+    const response = await api.post('/session',{
+      email,
+      password,
+    
+    });
+    const { id, name, token } = response.data;
+    setCookie(undefined,'@nextauth.token',token, {
+      maxAge: 60 * 60 * 24 * 30, //Expires one month
+      path : "/"
+    });
+
+    setUser({
+      id,
+      name,
+      email
+    });
+
+    // Pass to next requests our token
+    api.defaults.headers['Authorization'] = `Bearer ${ token }`
+
+    // Redirect our user to /dashboard
+    Router.push('/dashboard');
+
+   }catch(err){
+    console.log("ERROR TO ACCESS",err);
+   }
+   
   }
   return(
     <AuthContext.Provider value = {{ user, isAuthenticated, signIn, signOut }}>
