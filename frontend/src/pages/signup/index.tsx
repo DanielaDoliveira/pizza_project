@@ -12,7 +12,7 @@ import Link from 'next/link';
 interface eventProps extends React.FormEvent<HTMLInputElement>{}
 export default function SignUp() {
 
-  const { signIn } = useContext(AuthContext)
+  const { signUp } = useContext(AuthContext)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('');
@@ -25,6 +25,13 @@ export default function SignUp() {
       return;
     }
     setLoading(true);
+    let data = {
+      name,
+      email,
+      password,
+    }
+    await signUp(data);
+    setLoading(false);
   }
   return (
   <>
@@ -49,6 +56,7 @@ export default function SignUp() {
          />
 
           <Input
+        type = "password"
          placeholder = "Sua senha"
          value = { password }
          onChange = { (e)=> setPassword(e.target.value)}
