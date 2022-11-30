@@ -18,13 +18,18 @@ export default function Home() {
 
   async function handleLogin(event: FormEvent){
     event.preventDefault();
+    if(email === '' || password === ''){
+      alert("DADOS NÃO PREENCHIDOS!")
+    }
 
+    setLoading(true);
     let data = {
       email,
       password,
     }
 
     await signIn(data);
+    setLoading(false);
   }
   return (
   <>
@@ -49,7 +54,7 @@ export default function Home() {
          />
          <Button
          type = "submit"
-         loading={ false }
+         loading={ loading }
          > Acessar </Button>
         </form>
 
