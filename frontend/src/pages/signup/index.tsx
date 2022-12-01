@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/input';
 import { AuthContext } from '../../contexts/AuthContext'
 import { useContext, FormEvent, useState } from 'react';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 
 interface eventProps extends React.FormEvent<HTMLInputElement>{}
 export default function SignUp() {
@@ -21,7 +22,7 @@ export default function SignUp() {
   async function handleSignUp(event: FormEvent){
     event.preventDefault();
     if(name === ''|| email === '' || password === ''){
-      alert("DADOS NÃO PREENCHIDOS!");
+      toast.warning("Preencha todos os campos! ");
       return;
     }
     setLoading(true);

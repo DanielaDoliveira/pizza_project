@@ -1,8 +1,8 @@
 import Router from 'next/router';
-import { destroyCookie, setCookie } from 'nookies';
-import { createContext, ReactNode, useState } from 'react';
+import { destroyCookie, parseCookies, setCookie } from 'nookies';
+import { createContext, ReactNode, useEffect, useState } from 'react';
 import { api } from '../services/apiClient';
-
+import { toast } from 'react-toastify'
 type AuthContextData = {
   user: UserProps;
   isAuthenticated: boolean;
@@ -43,6 +43,22 @@ export function signOut(){
 export function AuthProvider({ children }: AuthProviderProps){
   const [ user, setUser ] = useState<UserProps>();
   const isAuthenticated = !!user;
+
+  useEffect(()=>{
+    const { '@nextauth.token' : token} = parseCookies();
+    if(token){
+      api.get('/me').then(response => {
+        const { id, name, email } = response.data;
+        setUser({
+          id,
+          name,
+          email
+        });
+      }).catch(()=>{
+        signOut();
+      })
+    }
+  },[])
   async function signIn({ email, password }: SignInProps){
    try{
     const response = await api.post('/session',{
@@ -67,9 +83,9 @@ export function AuthProvider({ children }: AuthProviderProps){
 
     // Redirect our user to /dashboard
     Router.push('/dashboard');
-
+    toast.success("Login bem sucedido! ")
    }catch(err){
-    console.log("ERROR TO ACCESS",err);
+    toast.error("Não foi possível fazer login");
    }
    
   }
@@ -80,10 +96,10 @@ export function AuthProvider({ children }: AuthProviderProps){
         name, 
         email, 
         password});
-      alert( "CADASTRADO COM SUCESSO!");
+      toast.success( "Conta criada com sucesso!");
       Router.push('/');
     } catch (error) {
-      
+      toast.error("Erro ao registrar conta");
     }
   }
   return(
