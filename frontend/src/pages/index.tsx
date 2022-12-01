@@ -9,6 +9,8 @@ import { Input } from '../components/ui/input';
 import Link from 'next/link';
 import { FormEvent, useContext, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import { toast } from 'react-toastify';
+import { canSSRGuest } from '../utils/canSSRGuest';
 
 export default function Home() {
   const { signIn } = useContext(AuthContext)
@@ -19,7 +21,7 @@ export default function Home() {
   async function handleLogin(event: FormEvent){
     event.preventDefault();
     if(email === '' || password === ''){
-      alert("DADOS NÃO PREENCHIDOS!")
+      toast.warning("Preencha todos os campos!")
     }
 
     setLoading(true);
@@ -49,6 +51,7 @@ export default function Home() {
 
           <Input
          placeholder = "Sua senha"
+         type = "password"
          value = { password }
          onChange = {(e)=> setPassword(e.target.value)}
          />
@@ -69,4 +72,12 @@ export default function Home() {
   </>
   
   )
+
+  
+
 }
+export const getServerSideProps = canSSRGuest(async(ctx)=>{
+  return {
+    props:{}
+  }
+})
