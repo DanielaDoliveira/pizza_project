@@ -3,8 +3,9 @@ import { Header } from "../../components/Header";
 import { canSSRAuth } from "../../utils/canSSRAuth";
 import styles from './styles.module.scss';
 import {FiUpload } from 'react-icons/fi'
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { setupAPIClient } from "../../services/api";
+import { toast } from "react-toastify";
 
 type ItemProps = [
   id: string,
@@ -15,6 +16,9 @@ categoryList: ItemProps[];
 }
 export default function Product( { categoryList }: CategoryProps ) {
 
+  const [name,setName] = useState('');
+  const [price,setPrice] = useState('');
+  const [description,setDescription] = useState('');
   const [avatarUrl, setAvatarUrl] =useState('');
   const [imageAvatar,setImageAvatar] = useState(null);
   const [categories,setCategories] = useState(categoryList);
@@ -39,6 +43,38 @@ export default function Product( { categoryList }: CategoryProps ) {
 
   }
 
+  function handleRegister(event: FormEvent)
+  {
+    event.preventDefault();
+    try {
+
+      const data = new FormData();
+      if(name === "" || price === "" || description === "" || imageAvatar === null){
+        toast.error("Preencha todos os campos!");
+        return;
+      }
+
+      data.append( 'name',name);
+      data.append( 'price',price);
+      data.append( 'description',description);
+      data.append( 'category_id',categories[categorySelected].id);
+      data.append( 'file',imageAvatar);
+
+      const api = setupAPIClient();
+      api.post('/product',data);
+      toast.success("Produto cadastrado com sucesso!")
+      
+    } catch (error) {
+      toast.error("Ops! Erro ao cadastrar!");
+      console.log(error);
+    }
+    setName('');
+    setPrice('');
+    setDescription('');
+    setImageAvatar('');
+    setAvatarUrl('');
+  }
+
    
   return(
   <>
@@ -48,7 +84,7 @@ export default function Product( { categoryList }: CategoryProps ) {
     <div>
      <Header/>
      <main className = { styles.container }>
-      <form className = { styles.form }>
+      <form className = { styles.form } onSubmit ={ handleRegister }>
 
         <label className = { styles.labelAvatar }>
           <span>
@@ -82,17 +118,25 @@ export default function Product( { categoryList }: CategoryProps ) {
         <input 
             type = "text" 
             placeholder = "Digite o nome do produto"
-            className = { styles.input }/>
+            className = { styles.input }
+            value = { name }
+            onChange = { (e)=> setName(e.target.value)}
+            />
 
 
             <input 
             type = "text" 
             placeholder = "Preço do produto"
-            className = { styles.input }/>
+            className = { styles.input }
+            value = { price }
+            onChange = { (e)=> setPrice(e.target.value)}
+            />
 
             <textarea
             placeholder = "Descreva seu produto ... "
             className = { styles.input }
+            value = { description }
+            onChange = { (e)=> setDescription(e.target.value)}
             />
 
             <button 
@@ -112,7 +156,7 @@ export default function Product( { categoryList }: CategoryProps ) {
 export const getServerSideProps = canSSRAuth(async(context)=>{
   const apiClient = setupAPIClient(context);
   const response = await apiClient.get("/category");
- console.log(response.data);
+
 return{
   props: {
     categoryList : response.data,
